@@ -108,6 +108,7 @@ public class DropDragCtrl : MonoBehaviour
                 _currentFood.OnShowNormal();
                 if (_cacheFood != _currentFood && _cacheFood != null)
                     _cacheFood.OnHideFood();
+
             }
         }
     }
