@@ -1,16 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
-
+using DG.Tweening;
 public class DropDragCtrl : MonoBehaviour
 {
     [SerializeField] private Image _imgFoodDrag;
     private FoodSlot _currentFood, _cacheFood;
     private bool _hasDrag;
     private Vector3 _offset;
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
@@ -23,15 +19,12 @@ public class DropDragCtrl : MonoBehaviour
                 _cacheFood = _currentFood; // o goc
                 _imgFoodDrag.gameObject.SetActive(true);
                 _imgFoodDrag.sprite = _currentFood.GetSpriteFood;
-                //_imgFoodDrag.transform.position = _currentFood.transform.position; // gan vi tri
-
-                //Tat hinh anh o o goc de tao cam giac da nhac len
-                _currentFood.OnActiveFood(false);
-                // tinh offset
-                Vector3 mouseWordPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                _imgFoodDrag.transform.position = _currentFood.transform.position; // gan vi tri
+                
+                _currentFood.OnActiveFood(false);//Tat hinh anh o o goc de tao cam giac da nhac len
+                
+                Vector3 mouseWordPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);// tinh offset
                 _offset = mouseWordPos - _currentFood.transform.position;
-
-                _currentFood.OnActiveFood(false);
             }
         }
         if (_hasDrag)
@@ -43,31 +36,34 @@ public class DropDragCtrl : MonoBehaviour
 
             FoodSlot slot = Utils.GetRayCastUI<FoodSlot>(Input.mousePosition);
 
-            //if(slot != null)
-            //{
-            //    if (!slot.HasFood)//vi tri item chua co food
-            //    {
-
-            //        if (_cacheFood.GetInstanceID() != slot.GetInstanceID())
-            //        {
-            //            _cacheFood.OnHideFood();
-            //            _cacheFood = slot;
-            //            _cacheFood.OnFadeFood();
-            //            _cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
-            //        }
-            //    }
-            //    else// vi tri tro chuot da co food
-            //    {
-            //        FoodSlot slotAvailable = slot.GetSlotNull;
-            //        if(slotAvailable != null)
-            //        {
-            //            _cacheFood.OnHideFood();
-            //            _cacheFood = slotAvailable;
-            //            _cacheFood.OnFadeFood();
-            //            _cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
-            //        }
-            //    }
-            //}
+            if (slot != null)
+            {
+                if (!slot.HasFood)//vi tri item chua co food
+                {
+                    if (_cacheFood == null || _cacheFood.GetInstanceID() != slot.GetInstanceID())
+                    {
+                        _cacheFood?.OnHideFood();
+                        _cacheFood = slot;
+                        _cacheFood.OnFadeFood();
+                        _cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
+                    }
+                }
+                else// vi tri tro chuot da co food
+                {
+                    FoodSlot slotAvailable = slot.GetSlotNull;
+                    if (slotAvailable != null)
+                    {
+                        _cacheFood?.OnHideFood();
+                        _cacheFood = slotAvailable;
+                        _cacheFood.OnFadeFood();
+                        _cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
+                    }
+                    else
+                    {
+                        this.OnClearCacheSlot();
+                    }
+                }
+            }
             //else
             //{
             //    if (_cacheFood != null)
@@ -76,40 +72,41 @@ public class DropDragCtrl : MonoBehaviour
             //        _cacheFood = null;
             //    }
             //}
-
-            if(slot != null && slot != _cacheFood)
-            {
-                //tra lai trang thai cu cho o cache truoc do
-                if (_cacheFood != _currentFood) _cacheFood.OnHideFood();
-                //Cap nhat cache moi
-                _cacheFood = slot;
-                if (!_cacheFood.HasFood)
-                {
-                    _cacheFood.OnSetSlot(_imgFoodDrag.sprite);
-                    _cacheFood.OnFadeFood(); // Hien thi bong mo
-                }
-
-            }
         }
+
         if(Input.GetMouseButtonUp(0) && _hasDrag)
         {
-            _imgFoodDrag.gameObject.SetActive(false);
-            //_currentFood.OnActiveFood(true);
-            //_currentFood = null;
-            _hasDrag = false;
-            if(_cacheFood != null && _cacheFood != _currentFood && !_cacheFood.HasFood)
+            if(_cacheFood != null) // xu ly fill item
             {
-                _cacheFood.OnSetSlot(_imgFoodDrag.sprite);
-                _cacheFood.OnShowNormal();
-                _currentFood.OnHideFood(); // Xoa o cu
+                _imgFoodDrag.transform.DOMove(_cacheFood.transform.position, 0.15f).OnComplete(() =>
+                {
+                    _currentFood?.OnCheckPrepareTray();
+                    _imgFoodDrag.gameObject.SetActive(false);
+                    _cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
+                    _cacheFood.OnActiveFood(true);
+                    _cacheFood.OnCheckMerge();
+                    _cacheFood = null;
+                    _currentFood = null; 
+                });
             }
-            else
+            else // xu ly tro ve vi tri ban dau
             {
-                _currentFood.OnShowNormal();
-                if (_cacheFood != _currentFood && _cacheFood != null)
-                    _cacheFood.OnHideFood();
+                _imgFoodDrag.transform.DOMove(_currentFood.transform.position, 0.3f).OnComplete(() =>
+                {
+                    _imgFoodDrag.gameObject.SetActive(false);
+                    _currentFood.OnActiveFood(true);
 
+                });
             }
+            _hasDrag = false;
+        }
+    }
+    private void OnClearCacheSlot()
+    {
+        if (_cacheFood != null && _cacheFood.GetInstanceID() != _currentFood.GetInstanceID())
+        {
+                _cacheFood.OnShowNormal();
+                _cacheFood = null;
         }
     }
 }
