@@ -5,6 +5,8 @@ using JetBrains.Annotations;
 
 public class GameManagers : MonoBehaviour
 {
+    private static GameManagers _instance;
+    public static GameManagers Instance => _instance;
     [SerializeField] private int _totalFood;
     [SerializeField] private int _totalGrill;
     [SerializeField] private Transform _gridGrill;
@@ -19,6 +21,7 @@ public class GameManagers : MonoBehaviour
         _listGrills = Utils.GetListInChild<GrillStation>(_gridGrill);
         Sprite[] loadedSprite = Resources.LoadAll<Sprite>("item");
         _totalSpriteFood = loadedSprite.ToList();
+        _instance = this;
     }
 
     void Start()
@@ -92,5 +95,14 @@ public class GameManagers : MonoBehaviour
             (result[i], result[rand]) = (result[rand], result[i]);
         }
         return result;
+    }
+
+    public void OnMinusFood()
+    {
+        --_totalFood;
+        if (_totalFood <= 0)
+        {
+            Debug.Log("Game Complete");
+        }
     }
 }
