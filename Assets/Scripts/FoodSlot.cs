@@ -76,6 +76,19 @@ public class FoodSlot : MonoBehaviour
     {
         _grillCtrl?.OnCheckPrepareTray();
     }
+    public void OnFadeOut()
+    {
+        _imgFood.transform.DOLocalMoveY(100f, 0.6f).OnComplete(() =>
+        {
+            this.OnActiveFood(false);
+            _imgFood.transform.localPosition = Vector3.zero;
+        });
+        _imgFood.DOColor(new Color(1f, 1f, 1f, 0f), 0.6f);
+    }
+    public void DoShake()
+    {
+        _imgFood.transform.DOShakePosition(0.5f, 10f, 10, 180f); //(tgian, ban kinh, so lan, goc)
+    }
     public FoodSlot GetSlotNull => _grillCtrl.GetSlotNull();
     public bool HasFood => _imgFood.gameObject.activeInHierarchy && _imgFood.color == _normalColor;
     public Sprite GetSpriteFood => _imgFood.sprite;

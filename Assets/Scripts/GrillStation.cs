@@ -10,6 +10,7 @@ public class GrillStation : MonoBehaviour
     private List<FoodSlot> _totalSlot;
 
     private Stack<TrayItem> _stackTrays = new Stack<TrayItem>();
+    public List<FoodSlot> TotalSlot => _totalSlot;
     private void Awake()
     {
         _totalTrays = Utils.GetListInChild<TrayItem>(_trayContainer);
