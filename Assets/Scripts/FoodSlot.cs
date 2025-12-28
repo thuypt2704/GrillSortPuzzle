@@ -10,6 +10,7 @@ public class FoodSlot : MonoBehaviour
 
     public Color CurrentColor => _imgFood.color;
     public Color FadeColor => _fadeColor;
+    public Image ImgFood => _imgFood;
 
     private GrillStation _grillCtrl;
     void Awake()

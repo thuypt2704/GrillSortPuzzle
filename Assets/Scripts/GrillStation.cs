@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 public class GrillStation : MonoBehaviour
 {
     [SerializeField] private Transform _trayContainer;
@@ -148,5 +149,50 @@ public class GrillStation : MonoBehaviour
                 return false;
         }
         return true;
+    }
+    public TrayItem GetFirstTray()
+    {
+        if(_stackTrays.Count > 0)
+        {
+            return _stackTrays.Peek();
+        }
+        return null;
+    }
+
+    public List<Image> ListFoodActive()
+    {
+        List<Image> result = new List<Image>();
+        for (int i = 0; i < _totalSlot.Count; i++)
+        {
+            if (_totalSlot[i].HasFood)
+            {
+                result.Add(_totalSlot[i].ImgFood);
+            }
+        }
+        for(int i = 0; i < _totalTrays.Count; i++)
+        {
+            TrayItem tray = _totalTrays[i];
+            if(tray.gameObject.activeInHierarchy)
+            {
+                for (int j = 0; j < tray.FoodList.Count; j++)
+                {
+                    if (tray.FoodList[j].gameObject.activeInHierarchy)
+                    {
+                        result.Add(tray.FoodList[j]);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    public void OnShuffleFX()
+    {
+        for(int i = 0; i < _totalSlot.Count; i++)
+        {
+            if (_totalSlot[i].HasFood)
+            {
+
+            }
+        }
     }
 }
