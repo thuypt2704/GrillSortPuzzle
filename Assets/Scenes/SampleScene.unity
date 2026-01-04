@@ -1579,9 +1579,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f831a7deec5903449b4356f59cd1d64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _totalFood: 18
+  _allFood: 20
+  _totalFood: 13
   _totalGrill: 9
   _gridGrill: {fileID: 665604497}
+  _magnetFX: {fileID: 0}
+  _magnetList: []
+  _fxNewGrill: {fileID: 0}
 --- !u!4 &107439468
 Transform:
   m_ObjectHideFlags: 0
@@ -1610,6 +1614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _imgFoodDrag: {fileID: 1647944226}
+  _timeCheckSuggest: 3
 --- !u!1 &110978513
 GameObject:
   m_ObjectHideFlags: 0

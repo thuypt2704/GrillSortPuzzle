@@ -55,7 +55,7 @@ public class DropDragCtrl : MonoBehaviour
                         _cacheFood?.OnHideFood();
                         _cacheFood = slot;
                         _cacheFood.OnFadeFood();
-                        _cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
+                        //_cacheFood.OnSetSlot(_currentFood.GetSpriteFood);
                     }
                 }
                 else// vi tri tro chuot da co food
@@ -113,10 +113,15 @@ public class DropDragCtrl : MonoBehaviour
     }
     private void OnClearCacheSlot()
     {
-        if (_cacheFood != null && _cacheFood.GetInstanceID() != _currentFood.GetInstanceID())
+        //if (_cacheFood != null && _cacheFood.GetInstanceID() != _currentFood.GetInstanceID())
+        //{
+        //        _cacheFood.OnShowNormal();
+        //        _cacheFood = null;
+        //}
+        if (_cacheFood != null && _cacheFood != _currentFood)
         {
-                _cacheFood.OnShowNormal();
-                _cacheFood = null;
+            _cacheFood.OnHideFood();
+            _cacheFood = null;
         }
     }
 }

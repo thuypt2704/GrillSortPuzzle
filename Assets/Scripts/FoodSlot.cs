@@ -35,10 +35,12 @@ public class FoodSlot : MonoBehaviour
     }
     public void OnFadeFood()
     {
-        this.OnActiveFood(false);
-        //
-        //_imgFood.gameObject.SetActive(true);
-        //
+        //this.OnActiveFood(false);
+        ////
+        ////_imgFood.gameObject.SetActive(true);
+        ////
+        //_imgFood.color = _fadeColor;
+        _imgFood.gameObject.SetActive(true);
         _imgFood.color = _fadeColor;
     }
     public void OnHideFood()

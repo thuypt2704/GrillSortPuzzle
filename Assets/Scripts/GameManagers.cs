@@ -19,6 +19,7 @@ public class GameManagers : MonoBehaviour
     [SerializeField] private Transform _magnetFX;
     [SerializeField] private List<Image> _magnetList;
     [SerializeField] private ParticleSystem _fxNewGrill;
+    [SerializeField] private int _currentLevel;
 
     private List<GrillStation> _listGrills;
     private float _avgTray; //so luong thuc an trung binh trong mot dia
@@ -34,6 +35,16 @@ public class GameManagers : MonoBehaviour
 
     void Start()
     {
+        LoadLevel(_currentLevel);
+    }
+    public void LoadLevel(int levelIndex)
+    {
+        LevelData level = LevelStep.Levels[levelIndex];
+
+        _allFood = level.allFood;
+        _totalFood = level.totalFood;
+        _totalGrill = level.totalGrill;
+
         OnInitLevel();
     }
 
