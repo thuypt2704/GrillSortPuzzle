@@ -1586,6 +1586,7 @@ MonoBehaviour:
   _magnetFX: {fileID: 0}
   _magnetList: []
   _fxNewGrill: {fileID: 0}
+  _currentLevel: 0
 --- !u!4 &107439468
 Transform:
   m_ObjectHideFlags: 0

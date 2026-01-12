@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
@@ -7,11 +7,10 @@ public class FoodSlot : MonoBehaviour
     private Image _imgFood;
     private Color _normalColor = new Color(1f, 1f, 1f, 1f);
     private Color _fadeColor = new Color(1f, 1f, 1f, 0.7f);
-
+    
     public Color CurrentColor => _imgFood.color;
     public Color FadeColor => _fadeColor;
     public Image ImgFood => _imgFood;
-
     private GrillStation _grillCtrl;
     void Awake()
     {
@@ -27,6 +26,7 @@ public class FoodSlot : MonoBehaviour
         _imgFood.SetNativeSize();
         _imgFood.rectTransform.localScale = Vector3.one;
         _imgFood.rectTransform.sizeDelta = new Vector2(8f, 48f);
+
     }
     public void OnActiveFood(bool active)
     {
@@ -35,29 +35,19 @@ public class FoodSlot : MonoBehaviour
     }
     public void OnFadeFood()
     {
-        //this.OnActiveFood(false);
-        ////
-        ////_imgFood.gameObject.SetActive(true);
-        ////
-        //_imgFood.color = _fadeColor;
-        _imgFood.gameObject.SetActive(true);
+        this.OnActiveFood(true);
         _imgFood.color = _fadeColor;
     }
     public void OnHideFood()
     {
-        this.OnActiveFood(true);
-        //
-        //_imgFood.gameObject.SetActive(false);
-        //
+        this.OnActiveFood(false);
         _imgFood.color = _normalColor;
     }
-    //
     public void OnShowNormal()
     {
         _imgFood.gameObject.SetActive(true);
         _imgFood.color = _normalColor;
     }
-    //
 
     public void OnCheckMerge()
     {
@@ -71,9 +61,9 @@ public class FoodSlot : MonoBehaviour
         _imgFood.transform.localScale = img.transform.localScale;
         _imgFood.transform.localEulerAngles = img.transform.localEulerAngles;
 
-        _imgFood.transform.DOMove(Vector3.zero, 0.2f);
-        _imgFood.transform.DOScale(Vector3.one, 0.2f);
-        _imgFood.transform.DORotate(Vector3.zero, 0.2f);
+        _imgFood.transform.DOLocalMove(Vector3.zero, 0.6f).SetEase(Ease.OutBack);
+        _imgFood.transform.DOScale(Vector3.one, 0.6f);
+        _imgFood.transform.DORotate(Vector3.zero, 0.6f);
     }
     public void OnCheckPrepareTray()
     {

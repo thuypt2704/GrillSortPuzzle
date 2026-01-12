@@ -14,7 +14,7 @@ public class TrayItem : MonoBehaviour
         for(int i = 0; i<_foodList.Count; i++)
         {
             _foodList[i].gameObject.SetActive(false);
-            _foodList[i].preserveAspect = true;
+
             _foodList[i].rectTransform.sizeDelta = new Vector2(6f, 36f);
             _foodList[i].rectTransform.localScale = Vector3.one;
         }
@@ -38,6 +38,7 @@ public class TrayItem : MonoBehaviour
     {
     rerand: int n = Random.Range(0, _foodList.Count);
         if (_foodList[n].gameObject.activeInHierarchy) goto rerand;
+
         return _foodList[n];
     }
 }

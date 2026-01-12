@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
+using System.Collections;
+using DG.Tweening;
 public class GrillStation : MonoBehaviour
 {
     [SerializeField] private Transform _trayContainer;
@@ -34,10 +35,12 @@ public class GrillStation : MonoBehaviour
         List<List<Sprite>> remainFood = new List<List<Sprite>>();
         for(int i = 0; i < totalTray - 1; i++)
         {
-            remainFood.Add(new List<Sprite>());
-            int n = Random.Range(0, listFood.Count);
-            remainFood[i].Add(listFood[n]);
-            listFood.RemoveAt(n);
+            if (listFood.Count > 0)
+            {
+                remainFood.Add(new List<Sprite>());
+                remainFood[i].Add(listFood[0]);
+                listFood.RemoveAt(0);
+            }
         }
         while(listFood.Count > 0)
         {
@@ -51,7 +54,7 @@ public class GrillStation : MonoBehaviour
         }
         for(int i = 0; i < _totalTrays.Count; i++)
         {
-            bool active = i < remainFood.Count;
+            bool active = i < remainFood.Count && remainFood[i].Count > 0;
             _totalTrays[i].gameObject.SetActive(active);
 
             if (active)
@@ -82,12 +85,29 @@ public class GrillStation : MonoBehaviour
     }
     public FoodSlot GetSlotNull()
     {
-        for(int i = 0; i < _totalSlot.Count; i++)
+        FoodSlot tmp = null;
+
+        for (int i = 0; i < _totalSlot.Count; i++)
         {
-            if (_totalSlot[i].HasFood)
-                return _totalSlot[i];
+            if (!_totalSlot[i].HasFood)
+            {
+                if (tmp == null)
+                {
+                    tmp = _totalSlot[i];
+                }
+                else
+                {
+                    Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    float x1 = Mathf.Abs(mousePos.x - tmp.transform.position.x);
+                    float x2 = Mathf.Abs(mousePos.x - _totalSlot[i].transform.position.x);
+
+                    if (x2 < x1)
+                        tmp = _totalSlot[i];
+                }
+            }
         }
-        return null;
+
+        return tmp;
     }
     private bool HasGrillEmpty()
     {
@@ -102,17 +122,25 @@ public class GrillStation : MonoBehaviour
     }
     public void OnCheckMerge()
     {
-        if(this.GetSlotNull() == null) // kiem tra xem so luong slot du 3 item chua, neu chua thi == null
+        if (this.GetSlotNull() == null) // kiem tra xem so luong slot du 3 item chua, neu chua du thi no == null
         {
             if (this.CanMerge())
             {
                 Debug.Log("Complete Grill");
-                for(int i = 0; i < _totalSlot.Count; i++)
-                {
-                    _totalSlot[i].OnActiveFood(false);
-                }
-                this.OnPrepareTray();
+
+                StartCoroutine(IEMerge());
+
+                this.OnPrepareTray(false);
                 GameManagers.Instance?.OnMinusFood();
+            }
+        }
+
+        IEnumerator IEMerge()
+        {
+            for (int i = 0; i < _totalSlot.Count; i++)
+            {
+                _totalSlot[i].OnFadeOut();
+                yield return new WaitForSeconds(0.1f);
             }
         }
     }
@@ -120,24 +148,41 @@ public class GrillStation : MonoBehaviour
     {
         if(this.HasGrillEmpty())
         {
-            this.OnPrepareTray();
+            this.OnPrepareTray(true);
         }
     }
-    private void OnPrepareTray()
+    private void OnPrepareTray(bool isNow)
     {
-        if (_stackTrays.Count > 0)
+        StartCoroutine(IEPrepare());
+
+        IEnumerator IEPrepare()
         {
-            TrayItem item = _stackTrays.Pop();//lay dia tren cung va xoa di
-            for (int i = 0; i < item.FoodList.Count; i++)
+            if (!isNow)
+                yield return new WaitForSeconds(0.95f);
+
+            if (_stackTrays.Count > 0)
             {
-                Image img = item.FoodList[i];
-                if (img.gameObject.activeInHierarchy)
+                TrayItem item = _stackTrays.Pop();
+
+                for (int i = 0; i < item.FoodList.Count; i++)
                 {
-                    _totalSlot[i].OnPrepareItem(img);
-                    img.gameObject.SetActive(false);
+                    Image img = item.FoodList[i];
+                    if (img.gameObject.activeInHierarchy)
+                    {
+                        _totalSlot[i].OnPrepareItem(img);
+                        img.gameObject.SetActive(false);
+                        yield return new WaitForSeconds(0.1f);
+                    }
                 }
+
+                CanvasGroup canvas = item.GetComponent<CanvasGroup>();
+                canvas.DOFade(0f, 0.5f).OnComplete(() =>
+                {
+                    item.gameObject.SetActive(false);
+                    canvas.alpha = 1f;
+                });
+
             }
-            item.gameObject.SetActive(false);
         }
     }
     private bool CanMerge()
@@ -169,10 +214,10 @@ public class GrillStation : MonoBehaviour
                 result.Add(_totalSlot[i].ImgFood);
             }
         }
-        for(int i = 0; i < _totalTrays.Count; i++)
+        for (int i = 0; i < _totalTrays.Count; i++)
         {
             TrayItem tray = _totalTrays[i];
-            if(tray.gameObject.activeInHierarchy)
+            if (tray.gameObject.activeInHierarchy)
             {
                 for (int j = 0; j < tray.FoodList.Count; j++)
                 {
@@ -187,7 +232,7 @@ public class GrillStation : MonoBehaviour
     }
     public void OnShuffleFX()
     {
-        for(int i = 0; i < _totalSlot.Count; i++)
+        for (int i = 0; i < _totalSlot.Count; i++)
         {
             if (_totalSlot[i].HasFood)
             {

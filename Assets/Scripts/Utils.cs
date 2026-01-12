@@ -6,7 +6,7 @@ public class Utils
     public static List<T> GetListInChild<T>(Transform parent)
     {
         List<T> result = new List<T>();
-        for( int i = 1; i< parent.childCount; i++)
+        for( int i = 0; i< parent.childCount; i++)
         {
             var component = parent.GetChild(i).GetComponent<T>();
             if (component != null)

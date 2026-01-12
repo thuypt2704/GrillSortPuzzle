@@ -12,10 +12,12 @@ public class GameManagers : MonoBehaviour
 {
     private static GameManagers _instance;
     public static GameManagers Instance => _instance;
+
     [SerializeField] private int _allFood;
     [SerializeField] private int _totalFood;
     [SerializeField] private int _totalGrill;
     [SerializeField] private Transform _gridGrill;
+
     [SerializeField] private Transform _magnetFX;
     [SerializeField] private List<Image> _magnetList;
     [SerializeField] private ParticleSystem _fxNewGrill;
@@ -35,18 +37,18 @@ public class GameManagers : MonoBehaviour
 
     void Start()
     {
-        LoadLevel(_currentLevel);
-    }
-    public void LoadLevel(int levelIndex)
-    {
-        LevelData level = LevelStep.Levels[levelIndex];
-
-        _allFood = level.allFood;
-        _totalFood = level.totalFood;
-        _totalGrill = level.totalGrill;
-
         OnInitLevel();
     }
+    //public void LoadLevel(int levelIndex)
+    //{
+    //    //LevelData level = LevelStep.Levels[levelIndex];
+
+    //    _allFood = level.allFood;
+    //    _totalFood = level.totalFood;
+    //    _totalGrill = level.totalGrill;
+
+    //    OnInitLevel();
+    //}
 
     private void OnInitLevel()
     {
